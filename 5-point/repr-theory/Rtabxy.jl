@@ -13,10 +13,24 @@ E[11, vcat(1:10, 41:43)] .= 1
 T = ScalingLieGroup(E)
 a₃ = ScalingLieGroupAction(T, vcat(α, β, x[:], y[:], t))
 
-A = a₁ × a₂ × a₃
+A₁ = a₁ × a₂ × a₃
+A₂ = a₃
+A = A₁ # choice of a group action
 
 vars = vcat(R[:], t, α, β, x[:], y[:])
-V = BoundedDegreePolynomials(vars, 3)
+V = VariableSpace(vars)
+ρ = GroupRepresentation(A, V)
+vars_irrs = irreducibles(ρ)
+
+D = 2
+V = BoundedDegreePolynomials(vars, D)
 ρ = GroupRepresentation(A, V)
 irrs = irreducibles(ρ)
 iso = isotypics(irrs)
+
+include("../utils.jl")
+
+unknowns = Set(vcat(R[:], t, α, β))
+μs = useful_highest_weights(vars_irrs, unknowns)
+length(μs) # number of useful nullspace computations
+max_dim, npairs = tested_hws_pairs_all_μs(iso, μs) # (size of largest Vandermonde matrix, number of all pairs (Hλ₁, Hλ₂))
