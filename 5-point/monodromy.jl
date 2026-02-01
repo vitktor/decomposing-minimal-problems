@@ -27,7 +27,3 @@ end
 x₀, p₀ = fabricateSample()
 
 F = run_monodromy(F, ([x₀], p₀))
-
-D = deck_permutations(F)
-twisted_pair = D[2]
-sol1_image = twisted_pair[1]

@@ -27,10 +27,3 @@ V = BoundedDegreePolynomials(vars, D)
 ρ = GroupRepresentation(A, V)
 irrs = irreducibles(ρ)
 iso = isotypics(irrs)
-
-include("../../utils.jl")
-
-unknwns = Set(vcat(R[:], t, α, β))
-μs = useful_highest_weights(vars_irrs, unknwns)
-length(μs) # number of useful nullspace computations
-max_dim, npairs = tested_hws_pairs_all_μs(iso, μs) # (size of largest Vandermonde matrix, number of all pairs (Hλ₁, Hλ₂))
