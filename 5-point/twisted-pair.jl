@@ -7,7 +7,7 @@ include("../utils.jl")
 
 # 1. Run monodromy and extract the twisted pair automrophism
 include("monodromy.jl")
-D = deck_permutations(F)
+D = aut_permutations(F)
 twisted_pair = D[2]
 sol1_image = twisted_pair[1]
 
@@ -38,12 +38,12 @@ for λ₁ in highest_weights(iso) # for each weight of the numerator of ψ_R
         Vden = iso[λ₂] # isotypic component for the denominator
         A = vandermonde_matrix(Vnum, Vden, vars, smpls, evals) # Vandermonde matrix from (7.7)
         N = Matrix(transpose(nullspace(A; rtol = 1e-10))) # transposed nullspace of A
-        DGR.rref!(N, 1e-5) # rref is necessary to identify spurious solutions (zero numerator or zero denominator)
+        DGR.rref!(N, 1e-5) # rref is necessary to identify spurious rows (zero numerator or zero denominator)
         DecomposingGroupRepresentations.sparsify!(N, 1e-5)
         for n in eachrow(N)
             # Interested only in representatives with nonzero numerator or nonzero denominator
             if norm(n[1:mul(Vnum)]) > 1e-8 && norm(n[mul(Vnum)+1:end]) > 1e-8
-                println("Nullspace dimension for weights $λ₁ -> $λ₂: ", size(N, 2))
+                println("Nullspace dimension for weights $λ₁ -> $λ₂: ", size(N, 1))
                 continue
             end
         end
@@ -55,7 +55,7 @@ end # --> The only meaningful weight pair is (λ₁,λ₂) = ([1,1,0,0,0,0,0,0,0
 λ₂ = λ₁ - ν
 has_weight(iso, λ₂)
 Vnum, Vden = iso[λ₁], iso[λ₂]
-A = vandermonde_matrix(Vnum, Vden, vars, smpls, evals)
+A = vandermonde_matrix(Vnum, Vden, vars, smpls, evals) # Vandermonde matrix from (7.7)
 N = nullspace(A)
 n = N[:,1]
 n = n / n[argmax(abs.(n))]
