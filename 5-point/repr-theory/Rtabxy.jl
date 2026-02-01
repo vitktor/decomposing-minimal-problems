@@ -22,15 +22,15 @@ V = VariableSpace(vars)
 ρ = GroupRepresentation(A, V)
 vars_irrs = irreducibles(ρ)
 
-D = 2
+D = 3 # D = 2
 V = BoundedDegreePolynomials(vars, D)
 ρ = GroupRepresentation(A, V)
 irrs = irreducibles(ρ)
 iso = isotypics(irrs)
 
-include("../utils.jl")
+include("../../utils.jl")
 
-unknowns = Set(vcat(R[:], t, α, β))
-μs = useful_highest_weights(vars_irrs, unknowns)
+unknwns = Set(vcat(R[:], t, α, β))
+μs = useful_highest_weights(vars_irrs, unknwns)
 length(μs) # number of useful nullspace computations
 max_dim, npairs = tested_hws_pairs_all_μs(iso, μs) # (size of largest Vandermonde matrix, number of all pairs (Hλ₁, Hλ₂))

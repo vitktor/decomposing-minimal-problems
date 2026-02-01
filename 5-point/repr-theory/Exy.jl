@@ -27,6 +27,6 @@ V = BoundedDegreePolynomials(vars, D)
 irrs = irreducibles(ρ)
 iso = isotypics(irrs)
 
-iso[Weight([1,1,0,0,0,0,0,0,0,0,0,0,3])]
-iso[Weight([0,0,0,0,0,0,0,0,0,0,0,0,3])]
-basis(iso[Weight([0,0,1,0,0,0,0,1,0,0,0,0,1])])
+iso[Weight([1,1,0,0,0,0,0,0,0,0,0,0,3])] # Demazure's constraints
+basis(iso[Weight([0,0,0,0,0,0,0,0,0,0,0,0,3])]) # det(E)
+basis(iso[Weight([0,0,1,0,0,0,0,1,0,0,0,0,1])]) # y₁ᵗ * E * x₁
