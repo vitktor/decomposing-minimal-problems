@@ -1,3 +1,7 @@
+import DynamicPolynomials as DP
+import HomotopyContinuation as HC
+import DecomposingGroupRepresentations as DGR
+
 """
 Quaternion to scaled rotation matrix.
 """
@@ -68,12 +72,12 @@ end
 
 function useful_highest_weights(
     vars_irrs::Vector{<:IrreducibleRepresentation},
-    unknowns::Set{<:Variable}
+    unknowns::Set{<:DP.Variable}
 )
     μs = Weight[]
     for irr in vars_irrs
         hwv = hw_vector(irr)
-        if variables(vector(hwv)) ⊆ unknowns
+        if DGR.variables(vector(hwv)) ⊆ unknowns
             push!(μs, highest_weight(irr))
         end
     end
@@ -94,8 +98,6 @@ function tested_hws_pairs_all_μs(
     end
     return max_dim, npairs
 end
-
-import DynamicPolynomials as DP
 
 function vandermonde_matrix(
     V_num::IsotypicComponent,
@@ -118,3 +120,9 @@ function vandermonde_matrix(
     end
     return A
 end
+
+to_expression(
+    f,
+    vars_DP::Vector{<:DP.Variable},
+    vars_HC::Vector{<:HC.Variable}
+) = HC.Expression(DP.subs(f, vars_DP => vars_HC))
