@@ -102,7 +102,7 @@ end
 function vandermonde_matrix(
     V_num::IsotypicComponent,
     V_den::IsotypicComponent,
-    vars_DP::Vector{<:DP.Variable},
+    vars::Vector{<:DP.Variable},
     samples::Matrix{ComplexF64},
     evals::Vector{ComplexF64}
 )
@@ -112,17 +112,17 @@ function vandermonde_matrix(
     A = zeros(ComplexF64, k, k)
     for i in 1:k # for each row of A
         for (j, hwv) in enumerate(hwv₁)
-            A[i, j] = hwv(vars_DP => samples[:, i])
+            A[i, j] = hwv(vars => samples[:, i])
         end
         for (j, hwv) in enumerate(hwv₂)
-            A[i, j + length(hwv₁)] = -evals[i]*hwv(vars_DP => samples[:, i])
+            A[i, j + length(hwv₁)] = -evals[i]*hwv(vars => samples[:, i])
         end
     end
     return A
 end
 
-to_expression(
-    f,
+to_HC_expression(
+    f::AbstractPolynomialLike,
     vars_DP::Vector{<:DP.Variable},
     vars_HC::Vector{<:HC.Variable}
 ) = HC.Expression(DP.subs(f, vars_DP => vars_HC))

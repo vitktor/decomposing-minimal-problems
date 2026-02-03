@@ -19,7 +19,7 @@ length(μs) # number of useful nullspace computations
 max_dim, npairs = tested_hws_pairs_all_μs(iso, μs) # (size of largest Vandermonde matrix, number of all pairs (Hλ₁, Hλ₂))
 
 # 3. Collect samples of the parametric system for the interpolation
-sample!(F; path_ids = [1, sol1_image], n_instances = max_dim) # track only 2 solutions that are in correspondece under Ψ
+sample!(F; path_ids = [1, sol1_image], n_instances = max_dim) # track only 2 solutions that are in correspondece under the twisted pair
 sols = samples(F)[[1, sol1_image]].solutions # dim: nuknowns x nsolutions x ninstances
 params = samples(F)[[1, sol1_image]].parameters # dim: nparameters x ninstances
 
@@ -28,7 +28,7 @@ unknowns(F)[1:9] # rotation matrix unknowns
 smpls = vcat(sols[:,1,:], params) # samples corresponding to the solution with idx 1
 evals = zeros(ComplexF64, max_dim) # evaluations of ψ_R at smpls
 for i in 1:max_dim
-    evals[i] = sols[1,2,i] + im*sols[2,2,i] + im*sols[4,2,i] - sols[5,2,i]
+    evals[i] = sols[1,2,i] + im*sols[2,2,i] + im*sols[4,2,i] - sols[5,2,i] # according to the highest weight vector R[1,1]+im*R[1,2]+im*R[2,1]-R[2,2]
 end
 ν = Weight([1,1,0,0,0,0,0,0,0,0,0,0,0]) # weight of ψ_R
 for λ₁ in highest_weights(iso) # for each weight of the numerator of ψ_R
@@ -53,7 +53,6 @@ end # --> The only meaningful weight pair is (λ₁,λ₂) = ([1,1,0,0,0,0,0,0,0
 # Focus on the only meaningful weight pair
 λ₁ = Weight([1,1,0,0,0,0,0,0,0,0,0,0,2])
 λ₂ = λ₁ - ν
-has_weight(iso, λ₂)
 Vnum, Vden = iso[λ₁], iso[λ₂]
 A = vandermonde_matrix(Vnum, Vden, vars, smpls, evals) # Vandermonde matrix from (7.7)
 N = nullspace(A)
@@ -74,3 +73,19 @@ g = t'*t
 f/g == a/b
 f == -a || f == a
 g == -b || g == b
+
+# 5. Weight vectors of the irreducible G-representation <Ψ_R>
+a_wv = WeightVector(ν, a) # concentrate on the numerator, since denominator b is G-invariant
+W = IrreducibleRepresentation(A₁, a_wv) # 9-dim representation isomorphic to <R>
+B = basis(space(W); as_weight_vectors = true) # Lie algebra orbit of a
+τ = GroupRepresentation(A₁, VariableSpace(R[:]))
+BR = basis(space(irreducibles(τ)[1]); as_weight_vectors = true)
+wghts = [weight(v) for v in BR]
+BRdict = Dict(zip(wghts, BR))
+Q = zeros(ComplexF64, 9, 9) # change-of-basis matrix from R[:] to BR[:]
+for (i, f) in enumerate(B)
+    w = weight(f)
+    Q[i,:] = DP.coefficients(vector(BRdict[w]), R[:])
+end
+Ψ_R = reshape(inv(Q)*basis(space(W)), 3, 3)
+Ψ_R == (2*t*t' - t'*t*I(3)) * R
