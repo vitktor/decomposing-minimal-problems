@@ -67,9 +67,9 @@ a = div_by_smallest_coeff(sum(n[1:mul(Vnum)].*hwv_num))
 b = div_by_smallest_coeff(sum(n[mul(Vnum)+1:end].*hwv_den))
 
 # Verify that ψ_R = a/b corresponds to the well-known formula for the twisted pair
-M = (2*t*t' - t'*t*I(3)) * R
+M = (2*t*transpose(t) - transpose(t)*t*I(3)) * R
 f = M[1,1] + im*M[1,2] + im*M[2,1] - M[2,2]
-g = t'*t
+g = transpose(t)*t
 f/g == a/b
 f == -a || f == a
 g == -b || g == b
@@ -88,4 +88,4 @@ for (i, f) in enumerate(B)
     Q[i,:] = DP.coefficients(vector(BRdict[w]), R[:])
 end
 Ψ_R = reshape(inv(Q)*basis(space(W)), 3, 3)
-Ψ_R == (2*t*t' - t'*t*I(3)) * R
+Ψ_R == (2*t*transpose(t) - transpose(t)*t*I(3)) * R
